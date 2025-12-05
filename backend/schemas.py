@@ -23,5 +23,24 @@ class ReadingOut(BaseModel):
         orm_mode = True
 
 
+class BaziRequest(BaseModel):
+    """Simple Bazi input: birth date and optional time."""
 
+    birth_date: str  # ISO date string: YYYY-MM-DD
+    birth_time: Optional[str] = None  # HH:MM, optional
+    user_id: Optional[int] = None
+
+
+class BaziPillar(BaseModel):
+    stem: str
+    branch: str
+    element: str
+    animal: Optional[str] = None
+
+
+class BaziResponse(BaseModel):
+    year_pillar: BaziPillar
+    # For now we only compute year pillar; later we can extend
+    summary: str
+    raw_input: BaziRequest
 

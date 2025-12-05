@@ -373,7 +373,69 @@ function TarotPage({ onBack, language }) {
 
 function BaziPage({ onBack, language }) {
   const t = translations[language] || translations.zh;
-  
+  const birthDate = useInput("");
+  const birthTime = useInput("");
+  const [loading, setLoading] = React.useState(false);
+  const [result, setResult] = React.useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!birthDate.value) {
+      setResult(
+        language === "en"
+          ? "Please select your birth date."
+          : language === "mi"
+          ? "Tīpakohia tō rā whānau."
+          : "请选择您的出生日期。"
+      );
+      return;
+    }
+    setLoading(true);
+    setResult("");
+    try {
+      const payload = {
+        birth_date: birthDate.value,
+        birth_time: birthTime.value && birthTime.value.trim() ? birthTime.value.trim() : null,
+      };
+      const res = await fetch(`${apiBase}/bazi`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      
+      if (!res.ok) {
+        let errorMessage = "Request failed";
+        try {
+          const err = await res.json();
+          errorMessage = err.detail || err.message || JSON.stringify(err);
+        } catch (e) {
+          errorMessage = `HTTP ${res.status}: ${res.statusText}`;
+        }
+        throw new Error(errorMessage);
+      }
+      
+      const data = await res.json();
+      setResult(
+        data.summary ||
+          JSON.stringify(data, null, 2)
+      );
+    } catch (err) {
+      console.error("Bazi calculation error:", err);
+      const errorMsg = err.message || String(err);
+      setResult(
+        (language === "en"
+          ? "Bazi calculation failed: "
+          : language === "mi"
+          ? "I rahua te tātai Bazi: "
+          : "八字计算失败：") + errorMsg
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="main">
       <button type="button" className="back-button" onClick={onBack}>
@@ -382,9 +444,49 @@ function BaziPage({ onBack, language }) {
       <section className="section">
         <h2>{t.baziPage.title}</h2>
         <p>{t.baziPage.description}</p>
-        <p className="small">
-          {t.baziPage.plan}
-        </p>
+        <form onSubmit={handleSubmit} className="form-row">
+          <label>
+            {t.numerologyPage.birthDate}
+            <input
+              type="date"
+              value={birthDate.value}
+              onChange={birthDate.onChange}
+            />
+          </label>
+          <label>
+            {language === "en"
+              ? "Birth time (optional)"
+              : language === "mi"
+              ? "Te wā whānau (kōwhiringa)"
+              : "出生时间（可选）"}
+            <input
+              type="time"
+              value={birthTime.value}
+              onChange={birthTime.onChange}
+            />
+          </label>
+          <button type="submit" disabled={loading}>
+            {loading
+              ? language === "en"
+                ? "Calculating..."
+                : language === "mi"
+                ? "E tātai ana..."
+                : "计算中..."
+              : language === "en"
+              ? "Calculate Bazi"
+              : language === "mi"
+              ? "Tātai Bazi"
+              : "计算八字"}
+          </button>
+        </form>
+        <div className="result-box">
+          {result ||
+            (language === "en"
+              ? "Your Bazi year pillar and summary will appear here."
+              : language === "mi"
+              ? "Ka puta ki konei tō pou tau Bazi me te whakarāpopototanga."
+              : "这里将显示您的八字年柱和概要说明。")}
+        </div>
       </section>
     </main>
   );
