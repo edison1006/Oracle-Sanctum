@@ -1,18 +1,32 @@
 from typing import List
 from datetime import datetime
 import json
+import sys
+import os
 
 from fastapi import Depends, FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from . import models, schemas
-from .db import Base, engine, get_db
-from .ocr import analyze_image_text
+# 支持相对导入和绝对导入
+try:
+    from . import models, schemas
+    from .db import Base, engine, get_db
+    from .ocr import analyze_image_text
+except ImportError:
+    # 如果相对导入失败，使用绝对导入
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import models
+    import schemas
+    from db import Base, engine, get_db
+    from ocr import analyze_image_text
 
 # 尝试导入AI服务，如果失败也不影响基本功能
 try:
-    from .ai_service import generate_bazi_interpretation
+    try:
+        from .ai_service import generate_bazi_interpretation
+    except ImportError:
+        from ai_service import generate_bazi_interpretation
     AI_SERVICE_AVAILABLE = True
 except ImportError:
     AI_SERVICE_AVAILABLE = False
@@ -541,7 +555,10 @@ def calculate_bazi(payload: schemas.BaziRequest, db: Session = Depends(get_db)):
                 print(f"Warning: Failed to generate AI interpretation: {ai_error}")
                 # 如果AI失败，使用基础解读
                 try:
-                    from .ai_service import generate_basic_interpretation
+                    try:
+                        from .ai_service import generate_basic_interpretation
+                    except ImportError:
+                        from ai_service import generate_basic_interpretation
                     interpretation = generate_basic_interpretation(
                         year_pillar.dict(),
                         month_pillar.dict(),
@@ -555,7 +572,10 @@ def calculate_bazi(payload: schemas.BaziRequest, db: Session = Depends(get_db)):
         else:
             # AI服务不可用，使用简单的基础解读
             try:
-                from .ai_service import generate_basic_interpretation
+                try:
+                    from .ai_service import generate_basic_interpretation
+                except ImportError:
+                    from ai_service import generate_basic_interpretation
                 interpretation = generate_basic_interpretation(
                     year_pillar.dict(),
                     month_pillar.dict(),

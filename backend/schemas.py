@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List, Dict
 
 from pydantic import BaseModel
 
@@ -36,15 +36,15 @@ class BaziPillar(BaseModel):
     branch: str
     element: str
     animal: Optional[str] = None
-    hidden_stems: Optional[list] = None  # 地支藏干
+    hidden_stems: Optional[List[str]] = None  # 地支藏干
     ten_god: Optional[str] = None  # 十神
 
 
 class ElementAnalysis(BaseModel):
     """五行分析"""
-    element_count: dict  # 各五行数量
+    element_count: Dict[str, float]  # 各五行数量
     dominant_element: Optional[str] = None  # 主导五行
-    missing_elements: list = []  # 缺失的五行
+    missing_elements: List[str] = []  # 缺失的五行
     element_balance: str = ""  # 五行平衡情况
 
 

@@ -3,7 +3,10 @@ from datetime import datetime
 from sqlalchemy import Column, DateTime, Integer, String, Text, ForeignKey
 from sqlalchemy.orm import relationship
 
-from .db import Base
+try:
+    from .db import Base
+except ImportError:
+    from db import Base
 
 
 class User(Base):
