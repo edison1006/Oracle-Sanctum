@@ -28,13 +28,21 @@ function BaziPage({ onBack, language }) {
         birth_date: birthDate,
         birth_time: birthTime && birthTime.trim() ? birthTime.trim() : null,
       };
+      
+      // 添加超时控制（30秒）
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+      
       const res = await fetch(`${API_BASE}/bazi`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       });
+      
+      clearTimeout(timeoutId);
       
       if (!res.ok) {
         let errorMessage = "Request failed";
@@ -106,7 +114,23 @@ function BaziPage({ onBack, language }) {
       setResult(displayResult || JSON.stringify(data, null, 2));
     } catch (err) {
       console.error("Bazi calculation error:", err);
-      const errorMsg = err.message || String(err);
+      let errorMsg = err.message || String(err);
+      
+      // 处理特定错误类型
+      if (err.name === 'AbortError') {
+        errorMsg = language === "en" 
+          ? "Request timeout. Please check your network connection."
+          : language === "mi"
+          ? "Kua pau te wā. Tirohia tō hononga ipurangi."
+          : "请求超时，请检查网络连接。";
+      } else if (err.message && err.message.includes('Failed to fetch')) {
+        errorMsg = language === "en"
+          ? "Cannot connect to server. Please make sure the backend is running."
+          : language === "mi"
+          ? "Kāore e taea te hono ki te tūmau. Me whakamatau te tūmau."
+          : "无法连接到服务器，请确保后端服务正在运行。";
+      }
+      
       setResult(
         (language === "en"
           ? "Bazi calculation failed: "
