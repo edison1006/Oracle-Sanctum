@@ -16,13 +16,18 @@ function Header({ onNavigateHome, language, onLanguageChange, showLanguageMenu, 
               type="button"
               className="btn btn-secondary"
               onClick={onToggleLanguageMenu}
+              aria-expanded={showLanguageMenu}
+              aria-haspopup="listbox"
+              aria-label={t.languageSettings}
             >
               {t.languageSettings}（{languageLabel}）
             </button>
             {showLanguageMenu && (
-              <div className="language-menu">
+              <div className="language-menu" role="listbox" aria-label={t.languageSettings}>
                 <button
                   type="button"
+                  role="option"
+                  aria-selected={language === "zh"}
                   className={`language-menu-item ${language === "zh" ? "active" : ""}`}
                   onClick={() => onLanguageChange("zh")}
                 >
@@ -30,6 +35,8 @@ function Header({ onNavigateHome, language, onLanguageChange, showLanguageMenu, 
                 </button>
                 <button
                   type="button"
+                  role="option"
+                  aria-selected={language === "en"}
                   className={`language-menu-item ${language === "en" ? "active" : ""}`}
                   onClick={() => onLanguageChange("en")}
                 >
@@ -37,6 +44,8 @@ function Header({ onNavigateHome, language, onLanguageChange, showLanguageMenu, 
                 </button>
                 <button
                   type="button"
+                  role="option"
+                  aria-selected={language === "mi"}
                   className={`language-menu-item ${language === "mi" ? "active" : ""}`}
                   onClick={() => onLanguageChange("mi")}
                 >

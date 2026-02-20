@@ -44,15 +44,16 @@ function HomePage({ onNavigate, language }) {
       </div>
       <div className="cards-grid">
         {features.map((feature) => (
-          <div
+          <button
+            type="button"
             key={feature.id}
             className="feature-card"
             onClick={() => onNavigate(feature.id)}
           >
-            <div className="card-icon">{feature.icon}</div>
-            <h3 className="card-title">{feature.title}</h3>
-            <p className="card-description">{feature.description}</p>
-          </div>
+            <span className="card-icon" aria-hidden="true">{feature.icon}</span>
+            <span className="card-title">{feature.title}</span>
+            <span className="card-description">{feature.description}</span>
+          </button>
         ))}
       </div>
     </main>

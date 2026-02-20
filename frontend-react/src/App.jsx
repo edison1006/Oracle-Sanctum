@@ -1,52 +1,50 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import { translations } from './utils/translations';
 import Header from './components/Header';
 import HomePage from './components/HomePage';
-import ZodiacPage from './components/ZodiacPage';
-import NumerologyPage from './components/NumerologyPage';
-import TarotPage from './components/TarotPage';
-import BaziPage from './components/BaziPage';
-import PalmFacePage from './components/PalmFacePage';
 import './App.css';
+
+const ZodiacPage = lazy(() => import('./components/ZodiacPage'));
+const NumerologyPage = lazy(() => import('./components/NumerologyPage'));
+const TarotPage = lazy(() => import('./components/TarotPage'));
+const BaziPage = lazy(() => import('./components/BaziPage'));
+const PalmFacePage = lazy(() => import('./components/PalmFacePage'));
+
+function PageFallback() {
+  return (
+    <main className="main" aria-busy="true">
+      <div className="page-loading" role="status" aria-live="polite">
+        <span className="page-loading-spinner" aria-hidden="true" />
+        <span>Loading…</span>
+      </div>
+    </main>
+  );
+}
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
-  const [language, setLanguage] = useState("zh"); // zh, en, mi
+  const [language, setLanguage] = useState("en");
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const languageMenuRef = useRef(null);
 
-  const navigateTo = (page) => {
-    setCurrentPage(page);
-  };
-
-  const navigateHome = () => {
-    setCurrentPage("home");
-  };
-
-  const toggleLanguageMenu = () => {
-    setShowLanguageMenu((prev) => !prev);
-  };
-
-  const handleChangeLanguage = (lang) => {
+  const navigateTo = useCallback((page) => setCurrentPage(page), []);
+  const navigateHome = useCallback(() => setCurrentPage("home"), []);
+  const toggleLanguageMenu = useCallback(() => setShowLanguageMenu((prev) => !prev), []);
+  const handleChangeLanguage = useCallback((lang) => {
     setLanguage(lang);
     setShowLanguageMenu(false);
-  };
+  }, []);
 
-  // 点击外部区域关闭菜单
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (languageMenuRef.current && !languageMenuRef.current.contains(event.target)) {
         setShowLanguageMenu(false);
       }
     };
-
     if (showLanguageMenu) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showLanguageMenu]);
 
   const renderPage = () => {
@@ -77,7 +75,9 @@ function App() {
         languageMenuRef={languageMenuRef}
         currentPage={currentPage}
       />
-      {renderPage()}
+      <Suspense fallback={<PageFallback />}>
+        {renderPage()}
+      </Suspense>
     </div>
   );
 }
