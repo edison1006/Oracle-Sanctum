@@ -108,30 +108,88 @@ body {
 }
 
 /* Header */
-/* First row: square almanac (left) + two cards (right), balanced height */
-/* 12 列栅格：侧边栏 4 列，主内容 8 列 */
-.home-first-row {
+/* 黄历 + 轮播 + 星座 + 右侧两卡：两行等高，黄历与星座运势卡片尺寸一致（同宽同高） */
+.home-top-grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: 1fr 1fr;
   gap: 1.5rem;
-  align-items: stretch;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  min-height: 420px;
 }
 
-.home-first-row .almanac-widget-wrap--with-checkin {
+.home-top-grid__left {
   grid-column: 1 / span 4;
-}
-
-.home-first-row > .home-carousel {
-  grid-column: 5 / -1;
   min-width: 0;
+  min-height: 0;
+  align-self: stretch;
 }
 
-/* 黄历卡片：玻璃拟态 + 柔和发光 */
+.home-top-grid__left:first-child {
+  grid-row: 1;
+}
+
+.home-top-grid__carousel {
+  grid-column: 5 / -1;
+  grid-row: 1;
+  min-width: 0;
+  min-height: 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.home-top-grid__carousel .home-carousel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.home-top-grid__carousel .home-carousel .home-carousel-inner {
+  flex: 1;
+  min-height: 0;
+}
+
+.home-top-grid__carousel .home-carousel .home-carousel-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 2rem;
+}
+
+/* 轮播圆点绝对定位到底部，不占流式高度，使右侧白卡与左侧黄历同高 */
+.home-top-grid__carousel .home-carousel-dots {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0;
+  right: 0;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.feature-block--horoscope.home-top-grid__left {
+  grid-row: 2;
+  min-height: 0;
+  height: 100%;
+  align-self: stretch;
+}
+
+.home-top-grid__right {
+  grid-column: 5 / -1;
+  grid-row: 2;
+}
+
+/* 黄历卡片：与星座运势卡片同尺寸（圆角、内边距、边框、阴影一致） */
 .almanac-widget-wrap--with-checkin {
   width: 100%;
+  height: 100%;
   min-width: 0;
-  min-height: 290px;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   border-radius: 16px;
@@ -165,7 +223,7 @@ body {
   padding: 0.6rem 0.8rem;
   overflow-y: auto;
   border-radius: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
 }
 
 .almanac-widget-wrap--with-checkin .almanac-widget-title {
@@ -236,7 +294,7 @@ body {
   word-break: break-all;
 }
 
-/* 黄历卡片内：每日签到区块 */
+/* 黄历卡片内：每日签到区块（与上方黄历区同底，无分隔线） */
 .almanac-widget-checkin {
   flex-shrink: 0;
   padding: 0.85rem 1rem;
@@ -245,7 +303,7 @@ body {
   align-items: center;
   gap: 0.35rem;
   text-align: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
 }
 
 .almanac-widget-checkin-icon {
@@ -481,21 +539,6 @@ body {
   margin-bottom: 0;
 }
 
-/* Feature blocks: 12 列栅格，左侧星座 4 列，右侧 8 列 */
-.home-feature-blocks {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.home-feature-blocks > .feature-block:first-child {
-  grid-column: 1 / span 4;
-}
-
-.home-feature-blocks > .home-feature-blocks-right {
-  grid-column: 5 / -1;
-}
 
 /* 右侧两卡：上下排列的长方形 */
 .home-feature-blocks-right {
@@ -575,6 +618,155 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+.feature-block--fengshui {
+  padding: 0.5rem 0;
+}
+.feature-block-desc {
+  font-size: 0.9rem;
+  color: #5a5270;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* 今日星座运势卡片：蓝底、左侧头像、顶部分类、运势指数、摘要 + 更多详情 */
+.feature-block--horoscope {
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  border: none;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.feature-block--horoscope .feature-block-head,
+.feature-block--horoscope .feature-block-body { display: none; }
+.feature-block--horoscope .horoscope-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.horoscope-card {
+  background: #f5f5f5;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  padding: 0.75rem 1rem 1rem;
+  color: var(--text-primary);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.horoscope-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+  flex-wrap: wrap;
+}
+.horoscope-card__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+}
+.horoscope-card__tab {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: color 0.2s, background 0.2s;
+}
+.horoscope-card__tab:hover {
+  color: var(--text-primary);
+}
+.horoscope-card__tab.is-active {
+  color: #ff6b9d;
+  font-weight: 600;
+  background: rgba(255,107,157,0.15);
+}
+.horoscope-card__pill {
+  background: #ff6b9d;
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.horoscope-card__main {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.horoscope-card__left {
+  flex-shrink: 0;
+  text-align: center;
+}
+.horoscope-card__avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.35rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.horoscope-card__avatar-symbol {
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--text-primary);
+}
+.horoscope-card__sign-dates {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.horoscope-card__content {
+  flex: 1;
+  min-width: 0;
+}
+.horoscope-card__ratings,
+.horoscope-card__indices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  font-size: 0.8rem;
+  margin-bottom: 0.4rem;
+  color: var(--text-primary);
+}
+.horoscope-card__summary {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0 0 0.25rem;
+}
+.horoscope-card__more {
+  background: none;
+  border: none;
+  color: #ff6b9d;
+  font-size: inherit;
+  cursor: pointer;
+  padding: 0 0.15rem;
+  margin-left: 0.25rem;
+  font-weight: 600;
+  text-decoration: underline;
+}
+.horoscope-card__more:hover {
+  color: #ff8fb3;
 }
 
 /* 12 星座小图标 + 星级预览 */
@@ -754,13 +946,17 @@ body {
 }
 
 @media (max-width: 900px) {
-  .home-feature-blocks {
+  .home-top-grid {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    min-height: 0;
   }
 
-  .home-feature-blocks > .feature-block:first-child,
-  .home-feature-blocks > .home-feature-blocks-right {
+  .home-top-grid__left,
+  .home-top-grid__carousel,
+  .home-top-grid__right {
     grid-column: 1 / -1;
+    grid-row: auto;
   }
 
   .home-feature-blocks-right {
@@ -780,6 +976,11 @@ body {
   flex-shrink: 0;
   width: 220px;
   display: flex;
+}
+
+/* 首页黄历卡片占满网格列宽，不受上面 220px 影响 */
+.almanac-widget-wrap.almanac-widget-wrap--with-checkin {
+  width: 100%;
 }
 
 .almanac-widget-wrap .almanac-widget {
@@ -891,19 +1092,22 @@ body {
 }
 
 @media (max-width: 768px) {
-  .home-first-row {
+  .home-top-grid {
     grid-template-columns: 1fr;
-  }
-  .home-first-row .almanac-widget-wrap--with-checkin,
-  .home-first-row > .home-carousel {
-    grid-column: 1 / -1;
-  }
-  .home-first-row .almanac-widget-wrap--with-checkin {
+    grid-template-rows: auto;
     min-height: 0;
-    width: 100%;
-    max-width: none;
   }
-  .home-carousel {
+  .home-top-grid__left,
+  .home-top-grid__carousel,
+  .home-top-grid__right {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+  .almanac-widget-wrap--with-checkin {
+    height: auto;
+    min-height: 0;
+  }
+  .home-top-grid__carousel .home-carousel {
     min-height: 260px;
   }
   .almanac-widget-wrap--square {
@@ -911,9 +1115,6 @@ body {
     max-width: 290px;
     height: auto;
     aspect-ratio: 1;
-  }
-  .home-first-row .hero-top-cards--standalone {
-    min-height: 0;
   }
   .almanac-widget-wrap {
     width: 100%;
@@ -1399,26 +1600,28 @@ body {
   border-top: 1px solid var(--border);
 }
 
+/* 命理知识库 + 命理文章 左右并排 */
+.knowledge-cards-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
 .cards-section--knowledge .feature-card--knowledge {
   width: 100%;
   max-width: 100%;
   min-height: 0;
   height: auto;
   aspect-ratio: auto;
-  flex-direction: row;
 }
 .cards-section--knowledge .feature-card--knowledge .card-figure {
-  flex: 0 0 120px;
-  min-width: 120px;
-  height: 120px;
+  flex: 0 0 55%;
   min-height: 120px;
-  border-radius: 16px 0 0 16px;
+  border-radius: 16px 16px 0 0;
 }
 .cards-section--knowledge .feature-card--knowledge .card-body {
   flex: 1;
   min-height: 0;
-  justify-content: center;
-  align-self: stretch;
 }
 
 .cards-section-title {
@@ -2555,11 +2758,7 @@ body {
   .feature-card .card-figure {
     min-height: 100px;
   }
-  .cards-section--knowledge .feature-card--knowledge {
-    flex-direction: column;
-  }
-  .cards-section--knowledge .feature-card--knowledge .card-figure {
-    min-width: auto;
-    border-radius: 16px 16px 0 0;
+  .knowledge-cards-row {
+    grid-template-columns: 1fr;
   }
 }

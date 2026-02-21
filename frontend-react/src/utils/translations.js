@@ -105,6 +105,15 @@ export const translations = {
       title: "命理知识库",
       description: "八字入门、风水、星座、命理故事、开运技巧",
     },
+    fengShui: {
+      title: "风水",
+      linkTo: "前往风水专区",
+      description: "方位、布局、开运与居家风水要点",
+    },
+    knowledgeArticles: {
+      title: "命理文章",
+      description: "精选命理、风水、八字等文章与解读",
+    },
     homeCarousel: {
       slides: [
         { title: "命理小知识", description: "八字、星座、塔罗入门与开运技巧", linkId: "knowledge", icon: "📖" },
@@ -115,12 +124,18 @@ export const translations = {
     todayHoroscope: {
       title: "今日星座运势",
       linkTo: "前往星座专区",
-      overallLuck: "整体运",
-      loveLuck: "爱情运",
-      careerLuck: "事业运",
-      wealthLuck: "财富运",
+      cardDescription: "查看你的星座今日运势与运评",
+      overallLuck: "综合运势",
+      loveLuck: "爱情运势",
+      careerLuck: "事业学业",
+      wealthLuck: "财富运势",
       luckReview: "运评",
       luckReviewSample: "运势一般，多了几分和气，少了几分刻板。",
+      healthIndex: "健康指数",
+      negotiationIndex: "商谈指数",
+      moreDetails: "更多详情",
+      tabs: { today: "今日运势", tomorrow: "明日运势", week: "本周运势", month: "本月运势", year: "今年运势", love: "爱情运势" },
+      sampleSummary: "综合运势：今日运势大吉，各方面都充满机遇与活力。你会感觉精力充沛，思维敏捷，做任何事情都能得心应手。无论是面对工作中的挑战，还是生活中的琐事，都能以积极乐观的态度…",
       zodiacSigns: [
         { id: "aries", name: "牡羊座", symbol: "♈" },
         { id: "taurus", name: "金牛座", symbol: "♉" },
@@ -135,6 +150,7 @@ export const translations = {
         { id: "aquarius", name: "水瓶座", symbol: "♒" },
         { id: "pisces", name: "双鱼座", symbol: "♓" },
       ],
+      signDates: { aries: "3.21-4.19", taurus: "4.20-5.20", gemini: "5.21-6.20", cancer: "6.21-7.22", leo: "7.23-8.22", virgo: "8.23-9.22", libra: "9.23-10.22", scorpio: "10.23-11.21", sagittarius: "11.22-12.21", capricorn: "12.22-1.19", aquarius: "1.20-2.18", pisces: "2.19-3.20" },
     },
     deityConsultation: {
       title: "金好运神筊",
@@ -419,6 +435,15 @@ export const translations = {
       title: "Fortune Knowledge Base",
       description: "Bazi basics, feng shui, zodiac, stories & luck tips",
     },
+    fengShui: {
+      title: "Feng Shui",
+      linkTo: "Go to Feng Shui",
+      description: "Direction, layout, luck & home feng shui basics",
+    },
+    knowledgeArticles: {
+      title: "Fortune Articles",
+      description: "Curated articles on Bazi, feng shui, and fortune-telling",
+    },
     homeCarousel: {
       slides: [
         { title: "Fortune Tips", description: "Bazi, zodiac, tarot basics & luck tips", linkId: "knowledge", icon: "📖" },
@@ -429,12 +454,18 @@ export const translations = {
     todayHoroscope: {
       title: "Today's Horoscope",
       linkTo: "Go to Zodiac",
+      cardDescription: "Check your sign and daily horoscope",
       overallLuck: "Overall",
       loveLuck: "Love",
-      careerLuck: "Career",
+      careerLuck: "Career & Study",
       wealthLuck: "Wealth",
       luckReview: "Review",
       luckReviewSample: "Average luck, more harmony, less rigidity.",
+      healthIndex: "Health",
+      negotiationIndex: "Negotiation",
+      moreDetails: "More",
+      tabs: { today: "Today", tomorrow: "Tomorrow", week: "Week", month: "Month", year: "Year", love: "Love" },
+      sampleSummary: "Overall: Very auspicious day with opportunities and energy. You'll feel energetic and sharp; tackle work and life with a positive attitude…",
       zodiacSigns: [
         { id: "aries", name: "Aries", symbol: "♈" },
         { id: "taurus", name: "Taurus", symbol: "♉" },
@@ -449,6 +480,7 @@ export const translations = {
         { id: "aquarius", name: "Aquarius", symbol: "♒" },
         { id: "pisces", name: "Pisces", symbol: "♓" },
       ],
+      signDates: { aries: "3.21-4.19", taurus: "4.20-5.20", gemini: "5.21-6.20", cancer: "6.21-7.22", leo: "7.23-8.22", virgo: "8.23-9.22", libra: "9.23-10.22", scorpio: "10.23-11.21", sagittarius: "11.22-12.21", capricorn: "12.22-1.19", aquarius: "1.20-2.18", pisces: "2.19-3.20" },
     },
     deityConsultation: {
       title: "Deity Consultation",
@@ -733,6 +765,15 @@ export const translations = {
       title: "Pātengi Mōhiotanga Matakite",
       description: "Bazi, feng shui, whetū, pakiwaitara, tohutohu waimarie",
     },
+    fengShui: {
+      title: "Feng Shui",
+      linkTo: "Go to Feng Shui",
+      description: "Direction, layout, luck & home feng shui basics",
+    },
+    knowledgeArticles: {
+      title: "Fortune Articles",
+      description: "Curated articles on Bazi, feng shui, and fortune-telling",
+    },
     homeCarousel: {
       slides: [
         { title: "Ngā Tohutohu Matakite", description: "Bazi, whetū, tarot me ngā tohutohu", linkId: "knowledge", icon: "📖" },
@@ -743,12 +784,18 @@ export const translations = {
     todayHoroscope: {
       title: "Whetū o Tēnei Rā",
       linkTo: "Ki te Whetū",
+      cardDescription: "Tirohia tō tohu me te waimarie o tēnei rā",
       overallLuck: "Whānui",
       loveLuck: "Aroha",
       careerLuck: "Mahi",
       wealthLuck: "Rawa",
       luckReview: "Arotake",
       luckReviewSample: "Waimarie āhua, nui ake te noho tahi.",
+      healthIndex: "Hauora",
+      negotiationIndex: "Kōrerorero",
+      moreDetails: "Ētahi atu",
+      tabs: { today: "Tēnei rā", tomorrow: "Āpōpō", week: "Wiki", month: "Marama", year: "Tau", love: "Aroha" },
+      sampleSummary: "Whānui: Rā tino pai, whānui ngā whānuitanga. Ka rongo koe i te hihiri…",
       zodiacSigns: [
         { id: "aries", name: "Aries", symbol: "♈" },
         { id: "taurus", name: "Taurus", symbol: "♉" },
@@ -763,6 +810,7 @@ export const translations = {
         { id: "aquarius", name: "Aquarius", symbol: "♒" },
         { id: "pisces", name: "Pisces", symbol: "♓" },
       ],
+      signDates: { aries: "3.21-4.19", taurus: "4.20-5.20", gemini: "5.21-6.20", cancer: "6.21-7.22", leo: "7.23-8.22", virgo: "8.23-9.22", libra: "9.23-10.22", scorpio: "10.23-11.21", sagittarius: "11.22-12.21", capricorn: "12.22-1.19", aquarius: "1.20-2.18", pisces: "2.19-3.20" },
     },
     deityConsultation: {
       title: "Uiui Atua",
