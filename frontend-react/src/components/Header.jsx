@@ -56,12 +56,14 @@ function Header({
             <div className="language-selector" ref={languageMenuRef}>
               <button
                 type="button"
-                className="header-top-link"
+                className="language-trigger"
                 onClick={onToggleLanguageMenu}
                 aria-expanded={showLanguageMenu}
                 aria-haspopup="listbox"
               >
-                {languageLabel}
+                <span className="language-trigger-icon" aria-hidden>🌐</span>
+                <span className="language-trigger-label">{languageLabel}</span>
+                <span className={`language-trigger-chevron ${showLanguageMenu ? 'is-open' : ''}`} aria-hidden>{showLanguageMenu ? '▲' : '▼'}</span>
               </button>
               {showLanguageMenu && (
                 <div className="language-menu" role="listbox">
