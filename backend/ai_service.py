@@ -3,6 +3,7 @@ AI service module: generate Bazi interpretations using the OpenAI API.
 If the OpenAI API is not available, this module can be adapted to other AI
 services (for example Claude, local models, etc.).
 """
+import json
 import os
 from typing import Optional
 
@@ -393,6 +394,92 @@ def get_personality_trait(element: str, language: str) -> str:
         }
     }
     return traits.get(language, {}).get(element, "")
+
+
+def generate_tarot_interpretation(
+    card_name: str,
+    question: Optional[str] = None,
+    language: str = "zh",
+) -> dict:
+    """
+    Generate a structured tarot interpretation in oracle style.
+    Returns dict with keys: judgment, advice, lucky_color, keywords (optional).
+    """
+    question_ctx = f" 用户问题或情境：{question}" if question else ""
+    prompts = {
+        "zh": f"""你是一位深邃、温和的神谕者（Oracle），用塔罗的象征语言给予启示。
+请针对抽到的牌「{card_name}」{question_ctx or "，为当下情境给予解读。"}
+你必须且仅输出一个合法的 JSON 对象，不要输出任何其他文字、markdown 或说明。格式如下：
+{{"judgment": "对当前牌面与情境的总体判断，2-4 句话，语气深邃、略带隐喻，避免直白说教", "advice": "可执行的建议或心法，2-3 句话", "lucky_color": "一个幸运颜色（中文名）", "keywords": ["关键词1", "关键词2", "关键词3"]}}
+judgment 和 advice 用中文，lucky_color 用中文，keywords 为 3 个中文关键词。""",
+        "en": f"""You are a deep, gentle Oracle speaking through Tarot symbolism.
+For the drawn card "{card_name}"{question_ctx or ", give an interpretation for the present moment."}
+You must output only a single valid JSON object, no other text, markdown, or explanation. Format:
+{{"judgment": "Overall reading of the card and situation, 2-4 sentences, deep and slightly metaphorical", "advice": "Actionable advice or mindset, 2-3 sentences", "lucky_color": "One lucky color (English name)", "keywords": ["keyword1", "keyword2", "keyword3"]}}
+Use English for all fields.""",
+        "mi": f"""He tohunga matakite koe, he ngāwari, he hōhonu, e kōrero mā te reo tohu o te Tarot.
+Mō te kāri i tohua "{card_name}"{question_ctx or ", homai he whakamārama mō te wā o nāianei."}
+Me tukuna e koe kotahi anō JSON object tika, kaua he kōrero kē, markdown, whakamārama rānei. Hōputu:
+{{"judgment": "Te whakatau whānui o te kāri me te āhuatanga, 2-4 rerenga, hōhonu, āhua metaphorical", "advice": "Tohutohu ka taea te mahi, 2-3 rerenga", "lucky_color": "Kotahi tae waimarie (ingoa Māori/English)", "keywords": ["kupu1", "kupu2", "kupu3"]}}
+Whakamahia te reo Māori, reo Pākehā rānei mō ngā āpure.""",
+    }
+    prompt = prompts.get(language, prompts["zh"])
+
+    if OPENAI_AVAILABLE:
+        api_key = os.getenv("OPENAI_API_KEY")
+        if api_key:
+            try:
+                from openai import OpenAI
+                client = OpenAI(api_key=api_key)
+                response = client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "You are an Oracle. Output only valid JSON, no markdown code blocks."},
+                        {"role": "user", "content": prompt},
+                    ],
+                    max_tokens=400,
+                    temperature=0.7,
+                )
+                raw = (response.choices[0].message.content or "").strip()
+                # Strip markdown code block if present
+                if raw.startswith("```"):
+                    raw = raw.split("\n", 1)[-1].rsplit("```", 1)[0].strip()
+                data = json.loads(raw)
+                return {
+                    "judgment": data.get("judgment", ""),
+                    "advice": data.get("advice", ""),
+                    "lucky_color": data.get("lucky_color", ""),
+                    "keywords": data.get("keywords") or [],
+                }
+            except (json.JSONDecodeError, Exception) as e:
+                print(f"Tarot interpretation parse/API error: {e}")
+    return _fallback_tarot_interpretation(card_name, language)
+
+
+def _fallback_tarot_interpretation(card_name: str, language: str) -> dict:
+    """Fallback when AI is unavailable: return simple structured interpretation."""
+    # Use a generic message based on card name; could be extended with TAROT_DECK-style data
+    fallbacks = {
+        "zh": {
+            "judgment": f"「{card_name}」在此刻出现，象征转折与启示。牌面指向你内心已感知的方向，不妨静心倾听。",
+            "advice": "今日宜内省与接纳变化；避免强求结果，顺其自然更得清明。",
+            "lucky_color": "深紫或金色",
+            "keywords": ["转折", "启示", "内省"],
+        },
+        "en": {
+            "judgment": f"The card \"{card_name}\" has appeared for this moment—a symbol of transition and insight. It points to what your heart already knows.",
+            "advice": "Today, turn inward and welcome change; avoid forcing outcomes. Clarity comes with flow.",
+            "lucky_color": "Deep purple or gold",
+            "keywords": ["transition", "insight", "introspection"],
+        },
+        "mi": {
+            "judgment": f"Kua puta te kāri \"{card_name}\" mō tēnei wā—he tohu o te hurihanga me te māramatanga. E tohu ana ki tā tō ngākau i mōhio kē.",
+            "advice": "Ā tēnei rā, hoki ki roto, whakatau i te hurihanga; kaua e āta tohe. Ka puta te māramatanga i te rere.",
+            "lucky_color": "Waiporoporo hōhonu, kōura rānei",
+            "keywords": ["hurihanga", "māramatanga", "hoki ki roto"],
+        },
+    }
+    return fallbacks.get(language, fallbacks["en"])
 
 
 def chat_with_master(messages: list, language: str = "zh") -> str:

@@ -102,3 +102,18 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     reply: str
 
+
+class TarotInterpretRequest(BaseModel):
+    """Request for AI interpretation of a drawn tarot card."""
+    card_name: str
+    question: Optional[str] = None
+    language: Optional[str] = "zh"
+
+
+class TarotInterpretResponse(BaseModel):
+    """Structured oracle-style tarot interpretation."""
+    judgment: str
+    advice: str
+    lucky_color: str
+    keywords: Optional[List[str]] = None
+

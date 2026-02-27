@@ -24,14 +24,16 @@ except ImportError:
 # Try to import the AI service; if it fails the core API still works
 try:
     try:
-        from .ai_service import generate_bazi_interpretation, chat_with_master
+        from .ai_service import generate_bazi_interpretation, chat_with_master, generate_tarot_interpretation
     except ImportError:
-        from ai_service import generate_bazi_interpretation, chat_with_master
+        from ai_service import generate_bazi_interpretation, chat_with_master, generate_tarot_interpretation
     AI_SERVICE_AVAILABLE = True
 except ImportError:
     AI_SERVICE_AVAILABLE = False
     def chat_with_master(messages, language="zh"):
         return "Interpretation service is not available." if language == "en" else "解读服务暂不可用。"
+    def generate_tarot_interpretation(card_name, question=None, language="zh"):
+        return {"judgment": "", "advice": "", "lucky_color": "", "keywords": []}
     print("Warning: AI service not available, will use basic interpretation")
 
 # Try to create database tables; if this fails the API can still respond
@@ -660,6 +662,21 @@ def chat(payload: schemas.ChatRequest):
     lang = (payload.language or "zh").strip() or "zh"
     reply = chat_with_master(messages, language=lang)
     return schemas.ChatResponse(reply=reply)
+
+
+@app.post("/tarot/interpret", response_model=schemas.TarotInterpretResponse)
+def tarot_interpret(payload: schemas.TarotInterpretRequest):
+    """
+    Get a structured oracle-style interpretation for a drawn tarot card.
+    Returns judgment, advice, lucky_color, and optional keywords.
+    """
+    lang = (payload.language or "zh").strip() or "zh"
+    result = generate_tarot_interpretation(
+        card_name=payload.card_name,
+        question=payload.question,
+        language=lang,
+    )
+    return schemas.TarotInterpretResponse(**result)
 
 
 @app.post("/ocr/face")
